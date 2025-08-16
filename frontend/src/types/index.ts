@@ -3,6 +3,7 @@ export interface Message {
   content: string;
   role: 'user' | 'assistant';
   timestamp: Date;
+  sources?: SearchResult[];
 }
 
 export interface ChatResponse {

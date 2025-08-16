@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState } from "react";
 import { Send, Paperclip, Smile } from "lucide-react";
 
 interface ChatInputProps {
