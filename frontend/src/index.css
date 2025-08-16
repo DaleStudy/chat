@@ -1,3 +1,517 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
+
+/* CSS Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* 기본 스타일 */
+html,
+body {
+  font-family: "Inter", system-ui, sans-serif;
+  background-color: #f8fafc;
+  color: #1e293b;
+  height: 100%;
+  overflow: hidden;
+}
+
+#root {
+  height: 100%;
+}
+
+/* App 컨테이너 */
+.App {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: #f8fafc;
+}
+
+/* 채팅 인터페이스 */
+.chat-interface {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background-color: #f8fafc;
+}
+
+/* 헤더 */
+.chat-header {
+  background-color: white;
+  border-bottom: 1px solid #e2e8f0;
+  padding: 1rem 1.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.header-avatar {
+  width: 2.5rem;
+  height: 2.5rem;
+  background-color: #dbeafe;
+  border-radius: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #2563eb;
+}
+
+.header-info h1 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 0.125rem;
+}
+
+.header-info p {
+  font-size: 0.875rem;
+  color: #64748b;
+}
+
+.online-badge {
+  background-color: #dcfce7;
+  color: #16a34a;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.online-dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  background-color: #16a34a;
+  border-radius: 50%;
+}
+
+/* 통계 카드 */
+.stats-section {
+  background-color: white;
+  border-bottom: 1px solid #e2e8f0;
+  padding: 1rem 1.5rem;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+@media (min-width: 768px) {
+  .stats-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.stats-card {
+  background-color: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.75rem;
+  padding: 0.75rem;
+  text-align: center;
+  transition: box-shadow 0.2s ease;
+}
+
+.stats-card:hover {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.stats-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0.5rem;
+  color: #2563eb;
+}
+
+.stats-number {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 0.25rem;
+}
+
+.stats-label {
+  font-size: 0.75rem;
+  color: #64748b;
+}
+
+/* 메시지 리스트 */
+.message-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1rem;
+  scroll-behavior: smooth;
+}
+
+.message-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.message-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.message-list::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+}
+
+.message-list::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+.message-container {
+  margin-bottom: 1.5rem;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.date-divider {
+  display: flex;
+  justify-content: center;
+  margin: 1rem 0;
+}
+
+.date-badge {
+  background-color: white;
+  border: 1px solid #e2e8f0;
+  color: #64748b;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.message-row {
+  display: flex;
+  margin-bottom: 0.5rem;
+}
+
+.message-row.user {
+  justify-content: flex-end;
+}
+
+.message-row.assistant {
+  justify-content: flex-start;
+}
+
+.message-content {
+  max-width: 70%;
+  position: relative;
+}
+
+.message-avatar {
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 0.5rem;
+  margin-bottom: 0.5rem;
+  font-size: 0.75rem;
+}
+
+.message-avatar.user {
+  background-color: #f1f5f9;
+  color: #475569;
+}
+
+.message-avatar.assistant {
+  background-color: #dbeafe;
+  color: #2563eb;
+}
+
+.message-bubble {
+  padding: 0.75rem 1rem;
+  border-radius: 1rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
+}
+
+.message-bubble.user {
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  color: white;
+  margin-left: auto;
+}
+
+.message-bubble.assistant {
+  background-color: white;
+  color: #1e293b;
+  border: 1px solid #e2e8f0;
+}
+
+.message-bubble.assistant:hover {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.message-text {
+  font-size: 0.875rem;
+  line-height: 1.5;
+  white-space: pre-wrap;
+}
+
+.message-time {
+  display: flex;
+  align-items: center;
+  font-size: 0.75rem;
+  color: #94a3b8;
+  margin-top: 0.25rem;
+}
+
+.message-time.user {
+  justify-content: flex-end;
+}
+
+.message-time.assistant {
+  justify-content: flex-start;
+}
+
+.message-sources {
+  margin-top: 0.5rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid #f1f5f9;
+}
+
+.sources-title {
+  font-size: 0.75rem;
+  color: #64748b;
+  margin-bottom: 0.5rem;
+}
+
+.source-item {
+  background-color: #f8fafc;
+  border-radius: 0.375rem;
+  padding: 0.5rem;
+  margin-bottom: 0.25rem;
+  font-size: 0.75rem;
+  color: #475569;
+}
+
+.source-badge {
+  display: inline-block;
+  background-color: #dbeafe;
+  color: #2563eb;
+  padding: 0.125rem 0.375rem;
+  border-radius: 0.25rem;
+  font-size: 0.625rem;
+  font-weight: 500;
+  margin-left: 0.25rem;
+}
+
+/* 타이핑 인디케이터 */
+.typing-indicator {
+  display: flex;
+  gap: 0.25rem;
+  padding: 0.5rem;
+}
+
+.typing-dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  background-color: #94a3b8;
+  border-radius: 50%;
+  animation: bounce 1.4s infinite ease-in-out;
+}
+
+.typing-dot:nth-child(1) {
+  animation-delay: -0.32s;
+}
+.typing-dot:nth-child(2) {
+  animation-delay: -0.16s;
+}
+
+/* 채팅 입력 */
+.chat-input-container {
+  background-color: white;
+  border-top: 1px solid #e2e8f0;
+}
+
+.quick-questions {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #e2e8f0;
+  background-color: #f8fafc;
+}
+
+.quick-questions-title {
+  font-size: 0.75rem;
+  color: #64748b;
+  margin-bottom: 0.5rem;
+}
+
+.quick-questions-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.quick-question-btn {
+  background-color: white;
+  border: 1px solid #e2e8f0;
+  color: #475569;
+  padding: 0.375rem 0.75rem;
+  border-radius: 1rem;
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.quick-question-btn:hover {
+  background-color: #f1f5f9;
+  border-color: #cbd5e1;
+}
+
+.quick-question-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.chat-input-form {
+  padding: 1rem;
+}
+
+.input-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.75rem;
+}
+
+.input-field {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  transition: all 0.2s ease;
+  background-color: white;
+}
+
+.input-field:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.input-field:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.input-field::placeholder {
+  color: #94a3b8;
+}
+
+.input-buttons {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.icon-btn {
+  padding: 0.5rem;
+  background: none;
+  border: none;
+  color: #64748b;
+  border-radius: 0.375rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.icon-btn:hover {
+  background-color: #f1f5f9;
+  color: #475569;
+}
+
+.icon-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.send-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #2563eb;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  gap: 0.5rem;
+}
+
+.send-btn:hover {
+  background-color: #1d4ed8;
+}
+
+.send-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.input-help {
+  margin-top: 0.5rem;
+  font-size: 0.75rem;
+  color: #94a3b8;
+}
+
+/* 애니메이션 */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes bounce {
+  0%,
+  80%,
+  100% {
+    transform: scale(0);
+  }
+  40% {
+    transform: scale(1);
+  }
+}
+
+/* 반응형 */
+@media (max-width: 640px) {
+  .message-content {
+    max-width: 85%;
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .input-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .input-buttons {
+    justify-content: space-between;
+  }
+}

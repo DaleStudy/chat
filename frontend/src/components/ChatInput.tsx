@@ -1,5 +1,5 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { Send } from 'lucide-react';
+import React, { useState, useRef, useEffect } from "react";
+import { Send, Paperclip, Smile } from "lucide-react";
 
 interface ChatInputProps {
   onSendMessage: (message: string) => void;
@@ -7,52 +7,91 @@ interface ChatInputProps {
 }
 
 const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, disabled }) => {
-  const [message, setMessage] = useState('');
-  const inputRef = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    if (inputRef.current && !disabled) {
-      inputRef.current.focus();
-    }
-  }, [disabled]);
+  const [message, setMessage] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (message.trim() && !disabled) {
       onSendMessage(message.trim());
-      setMessage('');
+      setMessage("");
     }
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       handleSubmit(e);
     }
   };
 
+  const quickQuestions = [
+    "달레 스터디 참여 방법",
+    "현재 진행 중인 프로젝트",
+    "참가비가 있나요?",
+    "초보자도 참여 가능한가요?",
+  ];
+
+  const handleQuickQuestion = (question: string) => {
+    onSendMessage(question);
+  };
+
   return (
-    <form onSubmit={handleSubmit} className="p-4 border-t bg-white">
-      <div className="flex space-x-2">
-        <input
-          ref={inputRef}
-          type="text"
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-          onKeyDown={handleKeyDown}
-          placeholder="달레 스터디에 대해 궁금한 것을 물어보세요..."
-          disabled={disabled}
-          className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent disabled:opacity-50"
-        />
-        <button
-          type="submit"
-          disabled={disabled || !message.trim()}
-          className="px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          <Send className="w-5 h-5" />
-        </button>
-      </div>
-    </form>
+    <div className="chat-input-container">
+      {/* 빠른 질문 버튼들 */}
+      {!message && (
+        <div className="quick-questions">
+          <div className="quick-questions-title">자주 묻는 질문:</div>
+          <div className="quick-questions-grid">
+            {quickQuestions.map((question, index) => (
+              <button
+                key={index}
+                onClick={() => handleQuickQuestion(question)}
+                disabled={disabled}
+                className="quick-question-btn"
+              >
+                {question}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* 메시지 입력 폼 */}
+      <form onSubmit={handleSubmit} className="chat-input-form">
+        <div className="input-row">
+          <input
+            type="text"
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            onKeyDown={handleKeyDown}
+            placeholder="달레 스터디에 대해 궁금한 것을 물어보세요..."
+            disabled={disabled}
+            className="input-field"
+          />
+
+          <div className="input-buttons">
+            <button type="button" disabled={disabled} className="icon-btn">
+              <Paperclip size={16} />
+            </button>
+
+            <button type="button" disabled={disabled} className="icon-btn">
+              <Smile size={16} />
+            </button>
+
+            <button
+              type="submit"
+              disabled={disabled || !message.trim()}
+              className="send-btn"
+            >
+              <Send size={16} />
+              전송
+            </button>
+          </div>
+        </div>
+
+        <div className="input-help">Enter로 전송, Shift+Enter로 줄바꿈</div>
+      </form>
+    </div>
   );
 };
 
