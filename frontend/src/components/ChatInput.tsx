@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Send, Paperclip, Smile } from "lucide-react";
+import { Send } from "lucide-react";
 
 interface ChatInputProps {
   onSendMessage: (message: string) => void;
@@ -70,14 +70,6 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, disabled }) => {
           />
 
           <div className="input-buttons">
-            <button type="button" disabled={disabled} className="icon-btn">
-              <Paperclip size={16} />
-            </button>
-
-            <button type="button" disabled={disabled} className="icon-btn">
-              <Smile size={16} />
-            </button>
-
             <button
               type="submit"
               disabled={disabled || !message.trim()}
