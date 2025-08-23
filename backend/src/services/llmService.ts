@@ -67,8 +67,13 @@ class LLMService {
         messages,
         temperature: options?.temperature || 0.7,
         max_tokens: options?.maxTokens || 1500,
-        stream: options?.stream || false,
+        stream: false, // 스트림 모드 비활성화로 타입 명확화
       });
+
+      // 타입 가드를 사용하여 스트림이 아닌 완료 응답임을 보장
+      if (!('choices' in completion)) {
+        throw new Error('Invalid completion response');
+      }
 
       const content = completion.choices[0]?.message?.content || '';
       
