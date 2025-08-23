@@ -1,9 +1,9 @@
 import axios from "axios";
 import { ChatResponse } from "@/types";
 
-// Vite 프록시를 사용하므로 상대 경로 사용
+// 환경변수에서 API URL 가져오기
 const api = axios.create({
-  baseURL: "/api", // Vite 프록시를 통해 백엔드로 요청
+  baseURL: `${import.meta.env.VITE_API_URL}/api`,
   timeout: 10000,
 });
 
