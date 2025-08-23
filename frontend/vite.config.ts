@@ -1,13 +1,14 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
-import { resolve } from 'path'
+// import { resolve } from 'path' // 제거: node path 모듈은 브라우저 빌드에 불필요
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  base: '/chat/', // GitHub Pages용 base 경로
   plugins: [react()],
   resolve: {
     alias: {
-      "@": resolve(__dirname, "./src"),
+      "@": '/src',
     },
   },
   server: {
