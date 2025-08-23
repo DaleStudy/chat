@@ -13,6 +13,8 @@ permissions:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    env:
+      VITE_API_URL: https://dalestudy-chat-backend.fly.dev
     defaults:
       run:
         working-directory: ./frontend
