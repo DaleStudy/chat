@@ -114,7 +114,7 @@ GET /api/search?q=React 스터디
 
 ## 🚢 배포
 
-`chat.dalestudy.com`은 Cloudflare `dalestudy` 계정의 Worker `chat`으로 배포됩니다. `backend/`에서 `npm run deploy`를 실행하면 프론트엔드 빌드까지 함께 진행됩니다. OpenAI 호출은 AI Gateway를 거치며, Worker secret `AI_GATEWAY_TOKEN`이 필요합니다.
+`chat.dalestudy.com`은 Cloudflare `dalestudy` 계정의 Worker `chat`으로 배포됩니다. `main`에 push하면 GitHub Actions가 프론트엔드 빌드와 함께 배포합니다. OpenAI 호출은 AI Gateway를 거치며, Worker secret `AI_GATEWAY_TOKEN`은 같은 이름의 org secret에서 배포할 때 넣습니다.
 
 ## 📝 라이센스
 
