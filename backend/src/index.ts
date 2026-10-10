@@ -1,61 +1,65 @@
-import express from 'express';
-import cors from 'cors';
-import helmet from 'helmet';
-import dotenv from 'dotenv';
-import chatRoutes from '@/routes/chat';
-import searchRoutes from '@/routes/search';
+import { z } from 'zod';
+import { handleChat } from '@/chat';
+import { SearchService, detectCategory } from '@/services/searchService';
+import { studyData } from '@/utils/dataLoader';
 
-// 환경변수 로드
-dotenv.config();
+const searchService = new SearchService(studyData.projects, studyData.faqs);
 
-const app = express();
-const PORT = process.env.PORT || 8080;
+const chatRequestSchema = z.object({
+  message: z.string().min(1).max(1000),
+});
 
-// 미들웨어 설정
-app.use(helmet());
-app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:3000',
-  credentials: true
-}));
-app.use(express.json({ limit: '10mb' }));
-app.use(express.urlencoded({ extended: true }));
+const json = (body: unknown, status = 200) => Response.json(body, { status });
 
-// 라우터 설정
-app.use('/api', chatRoutes);
-app.use('/api', searchRoutes);
+const search = (query: string | null) => {
+  if (!query) {
+    return json({ error: '검색어가 필요합니다.' }, 400);
+  }
 
-// 헬스체크 엔드포인트
-app.get('/health', (req, res) => {
-  res.json({ 
-    status: 'OK', 
-    timestamp: new Date().toISOString(),
-    service: 'dalestudy-chatbot-backend'
+  const category = detectCategory(query);
+  const results = searchService.searchByCategory(query, category);
+
+  return json({
+    query,
+    category,
+    results: results.map(result => ({
+      id: result.item.id,
+      title: 'title' in result.item ? result.item.title : result.item.question,
+      content: 'description' in result.item ? result.item.description : result.item.answer,
+      score: result.score,
+      type: 'title' in result.item ? 'project' : 'faq',
+    })),
   });
-});
+};
 
-// 기본 라우트
-app.get('/', (req, res) => {
-  res.json({ 
-    message: '달레 스터디 챗봇 API 서버',
-    version: '1.0.0'
-  });
-});
+const chat = async (request: Request, env: Env) => {
+  const parsed = chatRequestSchema.safeParse(await request.json().catch(() => null));
+  if (!parsed.success) {
+    return json({ error: '잘못된 요청 형식입니다.', details: parsed.error.errors }, 400);
+  }
 
-// 404 핸들러
-app.use('*', (req, res) => {
-  res.status(404).json({ error: '요청한 경로를 찾을 수 없습니다.' });
-});
+  const result = await handleChat(parsed.data.message, searchService, env.AI_GATEWAY_TOKEN);
+  return 'error' in result ? json({ error: result.error }, result.status) : json(result);
+};
 
-// 전역 에러 핸들러
-app.use((err: Error, req: express.Request, res: express.Response, next: express.NextFunction) => {
-  console.error('Unhandled error:', err);
-  res.status(500).json({ error: '서버 내부 오류가 발생했습니다.' });
-});
+export default {
+  async fetch(request, env) {
+    const { pathname, searchParams } = new URL(request.url);
 
-// 서버 시작
-app.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
-  console.log(`📍 Health check: http://localhost:${PORT}/health`);
-  console.log(`🤖 Chat API: http://localhost:${PORT}/api/chat`);
-  console.log(`🔍 Search API: http://localhost:${PORT}/api/search`);
-});
+    try {
+      if (pathname === '/health' && request.method === 'GET') {
+        return json({ status: 'OK', timestamp: new Date().toISOString(), service: 'dalestudy-chatbot' });
+      }
+      if (pathname === '/api/search' && request.method === 'GET') {
+        return search(searchParams.get('q'));
+      }
+      if (pathname === '/api/chat' && request.method === 'POST') {
+        return await chat(request, env);
+      }
+      return json({ error: '요청한 경로를 찾을 수 없습니다.' }, 404);
+    } catch (error) {
+      console.error('Unhandled error:', error);
+      return json({ error: '서버 내부 오류가 발생했습니다.' }, 500);
+    }
+  },
+} satisfies ExportedHandler<Env>;
