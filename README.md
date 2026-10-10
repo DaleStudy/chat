@@ -7,7 +7,7 @@
 ```
 dalestudy-chatbot/
 ├── frontend/          # React + TypeScript + Vite
-├── backend/           # Node.js + Express + TypeScript  
+├── backend/           # Cloudflare Worker (API + 프론트엔드 정적 파일 서빙)
 ├── data/             # JSON 데이터 파일
 ├── PLAN.md           # 프로젝트 계획서
 └── README.md         # 이 파일
@@ -16,34 +16,26 @@ dalestudy-chatbot/
 ## 🚀 빠른 시작
 
 ### Prerequisites
-- Node.js 18+ 
-- npm 또는 yarn
+- Node.js 22+
+- AI Gateway 토큰 (`backend/.dev.vars`에 `AI_GATEWAY_TOKEN=...`)
 
-### 1. 저장소 클론
-```bash
-git clone <repository-url>
-cd dalestudy-chatbot
-```
-
-### 2. 백엔드 실행
+### 1. 백엔드 (Worker) 실행
 ```bash
 cd backend
-cp .env.example .env
 npm install
 npm run dev
 ```
 
-백엔드 서버가 http://localhost:8080 에서 실행됩니다.
+`wrangler dev`가 프론트엔드를 빌드한 뒤 http://localhost:8787 에서 API와 화면을 함께 서빙합니다.
 
-### 3. 프론트엔드 실행  
+### 2. 프론트엔드 개발 서버 (선택)
 ```bash
 cd frontend
-cp .env.example .env
-npm install  
+npm install
 npm run dev
 ```
 
-프론트엔드가 http://localhost:3000 에서 실행됩니다.
+http://localhost:3000 에서 실행되고, `/api` 요청은 8787 포트의 Worker로 프록시됩니다.
 
 ## 📁 주요 파일
 
@@ -55,9 +47,9 @@ npm run dev
 - `src/types/index.ts` - TypeScript 타입 정의
 
 ### Backend
-- `src/index.ts` - Express 서버 메인 파일
-- `src/routes/chat.ts` - 채팅 API 라우터
-- `src/routes/search.ts` - 검색 API 라우터
+- `src/index.ts` - Worker 진입점 (`/health`, `/api/chat`, `/api/search`)
+- `src/chat.ts` - 채팅 처리 (질문 분류 → 검색 → 답변 생성)
+- `src/services/llmService.ts` - AI Gateway 경유 OpenAI 호출
 - `src/services/searchService.ts` - Fuse.js 검색 서비스
 - `src/utils/dataLoader.ts` - JSON 데이터 로더
 - `src/types/index.ts` - TypeScript 타입 정의
@@ -69,10 +61,10 @@ npm run dev
 
 ### Backend
 ```bash
-npm run dev      # 개발 서버 실행 (watch mode)
-npm run build    # TypeScript 빌드
-npm run start    # 프로덕션 서버 실행
-npm run lint     # ESLint 실행
+npm run dev        # 로컬 Worker 실행 (wrangler dev)
+npm run deploy     # Cloudflare에 배포 (wrangler deploy)
+npm run typecheck  # 타입 체크
+npm run lint       # ESLint 실행
 ```
 
 ### Frontend  
@@ -120,12 +112,9 @@ GET /api/search?q=React 스터디
 }
 ```
 
-## 🛠️ 다음 단계
+## 🚢 배포
 
-1. **LLM API 연동** - OpenAI 또는 Anthropic API 연결
-2. **프롬프트 엔지니어링** - 더 나은 답변을 위한 프롬프트 최적화
-3. **UI/UX 개선** - 더 나은 사용자 경험을 위한 디자인 개선
-4. **배포 설정** - Vercel + Railway/Render 배포 구성
+`chat.dalestudy.com`은 Cloudflare `dalestudy` 계정의 Worker `chat`으로 배포됩니다. `backend/`에서 `npm run deploy`를 실행하면 프론트엔드 빌드까지 함께 진행됩니다. OpenAI 호출은 AI Gateway를 거치며, Worker secret `AI_GATEWAY_TOKEN`이 필요합니다.
 
 ## 📝 라이센스
 

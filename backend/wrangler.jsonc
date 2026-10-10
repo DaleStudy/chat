@@ -1,0 +1,17 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "chat",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-10-01",
+  "account_id": "94480614a6df7731f1e4491bdac5c440",
+  "build": {
+    "command": "npm --prefix ../frontend ci && npm --prefix ../frontend run build"
+  },
+  "assets": {
+    "directory": "../frontend/dist",
+    "not_found_handling": "single-page-application",
+    "run_worker_first": ["/api/*", "/health"]
+  },
+  "secrets": { "required": ["AI_GATEWAY_TOKEN"] },
+  "observability": { "enabled": true }
+}

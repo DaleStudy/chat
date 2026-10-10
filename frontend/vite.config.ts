@@ -4,7 +4,6 @@ import react from "@vitejs/plugin-react";
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  base: "/", // GitHub Pages용 base 경로
   plugins: [react()],
   resolve: {
     alias: {
@@ -13,6 +12,6 @@ export default defineConfig({
   },
   server: {
     port: 3000,
-    // 프록시 제거 - 환경변수를 통해 직접 API URL 사용
+    proxy: { "/api": "http://localhost:8787" },
   },
 });

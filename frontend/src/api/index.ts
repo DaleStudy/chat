@@ -1,9 +1,8 @@
 import axios from "axios";
 import { ChatResponse } from "@/types";
 
-// 환경변수에서 API URL 가져오기
 const api = axios.create({
-  baseURL: `${import.meta.env.VITE_API_URL}/api`,
+  baseURL: "/api",
   timeout: 10000,
 });
 
