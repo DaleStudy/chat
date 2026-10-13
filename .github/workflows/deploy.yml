@@ -35,14 +35,12 @@ jobs:
       - run: npm ci
         working-directory: ./backend
 
-      - name: Write secrets file
-        env:
-          AI_GATEWAY_TOKEN: ${{ secrets.AI_GATEWAY_TOKEN }}
-        run: jq -n 'env | {AI_GATEWAY_TOKEN}' > "$RUNNER_TEMP/secrets.json"
-
       - name: Deploy
         uses: cloudflare/wrangler-action@v4
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           workingDirectory: backend
-          command: deploy --secrets-file ${{ runner.temp }}/secrets.json
+          secrets: |
+            AI_GATEWAY_TOKEN
+        env:
+          AI_GATEWAY_TOKEN: ${{ secrets.AI_GATEWAY_TOKEN }}
