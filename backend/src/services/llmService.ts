@@ -2,7 +2,7 @@
 const AI_GATEWAY_ACCOUNT_ID = '86aa227176a624680f7d34e691472576';
 const AI_GATEWAY_ID = 'dalestudy';
 const CHAT_COMPLETIONS_URL = `https://gateway.ai.cloudflare.com/v1/${AI_GATEWAY_ACCOUNT_ID}/${AI_GATEWAY_ID}/openai/chat/completions`;
-const MODEL = 'gpt-4o-mini';
+const MODEL = 'gpt-6-luna';
 
 export interface LLMError {
   message: string;
@@ -45,8 +45,9 @@ export const chatCompletion = async (
     body: JSON.stringify({
       model: MODEL,
       messages,
+      reasoning_effort: 'none',
       temperature: options.temperature,
-      max_tokens: options.maxTokens,
+      max_completion_tokens: options.maxTokens,
     }),
   });
 
