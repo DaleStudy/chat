@@ -1,7 +1,5 @@
-// AI Gateway 를 거치는 OpenAI 엔드포인트. OpenAI 키는 게이트웨이에 저장돼 있다.
-const AI_GATEWAY_ACCOUNT_ID = '86aa227176a624680f7d34e691472576';
+// Worker 와 같은 계정의 AI Gateway. AI 바인딩으로 부르므로 토큰이 없고, OpenAI 키는 게이트웨이에 BYOK 로 저장돼 있다.
 const AI_GATEWAY_ID = 'dalestudy';
-const CHAT_COMPLETIONS_URL = `https://gateway.ai.cloudflare.com/v1/${AI_GATEWAY_ACCOUNT_ID}/${AI_GATEWAY_ID}/openai/chat/completions`;
 const MODEL = 'gpt-6-luna';
 
 export interface LLMError {
@@ -29,26 +27,26 @@ export const isLLMError = (error: unknown): error is LLMError =>
   typeof error === 'object' && error !== null && 'statusCode' in error;
 
 export const chatCompletion = async (
-  gatewayToken: string,
+  ai: Ai,
   messages: Message[],
   options: { temperature: number; maxTokens: number },
 ): Promise<string> => {
-  const response = await fetch(CHAT_COMPLETIONS_URL, {
-    method: 'POST',
+  const response = await ai.gateway(AI_GATEWAY_ID).run({
+    provider: 'openai',
+    endpoint: 'chat/completions',
     headers: {
-      'cf-aig-authorization': `Bearer ${gatewayToken}`,
-      'cf-aig-max-attempts': '3',
-      'cf-aig-retry-delay': '1000',
+      'cf-aig-max-attempts': 3,
+      'cf-aig-retry-delay': 1000,
       'cf-aig-backoff': 'exponential',
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({
+    query: {
       model: MODEL,
       messages,
       reasoning_effort: 'none',
       temperature: options.temperature,
       max_completion_tokens: options.maxTokens,
-    }),
+    },
   });
 
   if (!response.ok) {

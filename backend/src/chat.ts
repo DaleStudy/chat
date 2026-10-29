@@ -30,12 +30,12 @@ const predefinedAnswers: Record<string, ChatResponse> = {
 export const handleChat = async (
   message: string,
   search: SearchService,
-  gatewayToken: string,
+  ai: Ai,
 ): Promise<ChatResponse | { error: string; status: number }> => {
   try {
     // 1단계: 질문이 커뮤니티 관련인지 판별
     const classification = await chatCompletion(
-      gatewayToken,
+      ai,
       [{ role: 'user', content: PROMPTS.createQuestionClassifierPrompt(message) }],
       { temperature: 0.1, maxTokens: 10 },
     );
@@ -60,7 +60,7 @@ export const handleChat = async (
 
     // 3단계: LLM을 통한 답변 생성
     const answer = await chatCompletion(
-      gatewayToken,
+      ai,
       [
         { role: 'system', content: PROMPTS.SYSTEM_MESSAGE },
         { role: 'user', content: PROMPTS.createAnswerGenerationPrompt(message, formattedResults) },
