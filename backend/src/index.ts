@@ -38,7 +38,7 @@ const chat = async (request: Request, env: Env) => {
     return json({ error: '잘못된 요청 형식입니다.', details: parsed.error.errors }, 400);
   }
 
-  const result = await handleChat(parsed.data.message, searchService, env.AI_GATEWAY_TOKEN);
+  const result = await handleChat(parsed.data.message, searchService, env.AI);
   return 'error' in result ? json({ error: result.error }, result.status) : json(result);
 };
 

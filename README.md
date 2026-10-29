@@ -17,7 +17,7 @@ dalestudy-chatbot/
 
 ### Prerequisites
 - Node.js 22+
-- AI Gateway 토큰 (`backend/.dev.vars`에 `AI_GATEWAY_TOKEN=...`)
+- `npx wrangler login` (AI 바인딩이 로컬에서도 원격 AI Gateway를 부릅니다)
 
 ### 1. 백엔드 (Worker) 실행
 ```bash
@@ -114,7 +114,7 @@ GET /api/search?q=React 스터디
 
 ## 🚢 배포
 
-`chat.dalestudy.com`은 Cloudflare `dalestudy` 계정의 Worker `chat`으로 배포됩니다. `main`에 push하면 GitHub Actions가 프론트엔드 빌드와 함께 배포합니다. OpenAI 호출은 AI Gateway를 거치며, Worker secret `AI_GATEWAY_TOKEN`은 같은 이름의 org secret에서 배포할 때 넣습니다.
+`chat.dalestudy.com`은 Cloudflare `dalestudy` 계정의 Worker `chat`으로 배포됩니다. `main`에 push하면 GitHub Actions가 프론트엔드 빌드와 함께 배포합니다. OpenAI 호출은 같은 계정의 AI Gateway(`dalestudy`)를 AI 바인딩으로 거치므로 토큰이 필요 없고, OpenAI 키는 게이트웨이에 BYOK로 저장돼 있습니다.
 
 ## 📝 라이센스
 
